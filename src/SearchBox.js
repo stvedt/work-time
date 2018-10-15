@@ -3,7 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Select from 'react-select';
+import Select, { createFilter } from 'react-select';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
@@ -12,16 +12,11 @@ import Chip from '@material-ui/core/Chip';
 import MenuItem from '@material-ui/core/MenuItem';
 import CancelIcon from '@material-ui/icons/Cancel';
 import { emphasize } from '@material-ui/core/styles/colorManipulator';
-import moment from 'moment-timezone';
 import { zones, countries } from 'moment-timezone/data/meta/latest.json';
-import _ from 'lodash';
 
-console.log('zones', zones)
-
-let countryKeys = Object.keys(countries);
-console.log(countryKeys);
-
-let newSuggestions = [];
+const countryKeys = Object.keys(countries);
+const newSuggestions = [];
+const filterOption = createFilter({ stringify: option => option.label, matchFrom: 'start' });
 
 countryKeys.map((country) => {
   // console.log(countries[country]);
@@ -31,34 +26,28 @@ countryKeys.map((country) => {
     fullCountry.zones.map(zone => {
       newSuggestions.push({
         value: zone,
-        label: `${zone} - ${fullCountry.name}`,
+        label: `${fullCountry.name} - ${zone}`,
       });
     });
   } else {
     newSuggestions.push( {
       value: fullCountry.zones[0],
-      label: `${fullCountry.zones[0]} - ${fullCountry.name}`
+      label: `${fullCountry.name} - ${fullCountry.zones[0]}`
     });
   }
 });
 
-_.sortBy(newSuggestions, 'label');
 
-console.log('newSuggestions', newSuggestions);
-// const zonesWithFullCountries = zones.assign((object) => {
+let newSuggestionsSorted = newSuggestions.sort(function (a, b) {
+  console.log('sort',  a.label, b.label, (a.label < b.label))
+  if(a.label < b.label) return -1;
+  if(a.label > b.label) return 1;
+  return 0;
+});
 
-// })
-// console.log('names',moment.tz.names());
-// const suggestions = moment.tz.names()
-// .map(suggestion => ({
-//   value: suggestion,
-//   label: suggestion,
-// }));
-// console.log(suggestions);
 const styles = theme => ({
   root: {
-    flexGrow: 1,
-    height: 250,
+    flexGrow: 1
   },
   input: {
     display: 'flex',
@@ -240,11 +229,12 @@ class IntegrationReactSelect extends React.Component {
           <Select
             classes={classes}
             styles={selectStyles}
-            options={newSuggestions}
+            options={newSuggestionsSorted}
             components={components}
             value={this.state.single}
             onChange={this.handleChange('single')}
             placeholder="Search a country (start with a)"
+            filterOption={filterOption}
           />
       </div>
     );
