@@ -3,6 +3,9 @@ import './App.css';
 import MomentReact from 'react-moment';
 import moment from 'moment-timezone';
 import IntegrationReactSelect from './SearchBox';
+import Typography from '@material-ui/core/Typography';
+import { withTheme } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
 
 class App extends Component {
   constructor(props){
@@ -28,41 +31,45 @@ class App extends Component {
     let dayTimes = [];
     for(let i = 0; i < 24; i++){
       dayTimes.push(
-        <MomentReact
-          className="time"
-          add={{ hours: i }}
-          format='hh:mm a'
-          key={time+i}>
-            {time}
-        </MomentReact>
+        <Typography variant="body2" key={time+i}>
+          <MomentReact
+            className="time"
+            add={{ hours: i }}
+            format='hh:mm a'>
+              {time}
+          </MomentReact>
+        </Typography>
       );
     }
     return dayTimes;
   }
 
   render() {
-    const time1 = moment().tz(this.state.location1).startOf('day');
-    const time2 = moment(time1).tz(this.state.location2)
-    // console.log(moment.tz.names());
-
-    let dayTimes1 = this.calcDay(time1);
-    let dayTimes2 = this.calcDay(time2);
+    const { location1, location2 } = this.state;
+    const timeNow1 = moment();
+    const timeNow2 = moment().tz(location2)
+    const time1 = moment().tz(location1).startOf('day');
+    const time2 = moment(time1).tz(location2)
+    const dayTimes1 = this.calcDay(time1);
+    const dayTimes2 = this.calcDay(time2);
     
     return (
-      <div className="app">
-        <div className="left" key="left">
+      <Grid container className="app">
+        <Grid sm={6} className="left" key="left">
           <IntegrationReactSelect onChange={(value) => this.onChageTimeZone('location1', value)}/>
-          <h3>{this.state.location1}</h3>
+          <Typography component="h4" variant="h4">{location1}</Typography>
+          <Typography component="h3" variant="h3"><MomentReact format='hh:mm a' interval={15000}>{timeNow1}</MomentReact></Typography>
           {dayTimes1}
-        </div>
-        <div className="right" key="right">
+        </Grid>
+        <Grid sm={6} className="right" key="right">
           <IntegrationReactSelect onChange={(value) => this.onChageTimeZone('location2', value)}/>
-          <h3>{this.state.location2}</h3>
+          <Typography component="h4" variant="h4">{location2}</Typography>
+          <Typography component="h3" variant="h3"><MomentReact format='hh:mm a' interval={15000}>{timeNow2}</MomentReact></Typography>
           {dayTimes2}
-        </div>
-      </div>
+        </Grid>
+      </Grid>
     );
   }
 }
 
-export default App;
+export default withTheme()(App);
