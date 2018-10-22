@@ -13,8 +13,10 @@ class App extends Component {
 
     this.state = {
       location1: 'America/New_York',
-      location2: 'Asia/Kolkata'
+      location2: 'Asia/Kolkata',
+      now: moment()
     }
+    setInterval(() => this.setState({now: moment()}),1000);
 
     this.onChageTimeZone = this.onChageTimeZone.bind(this);
   }
@@ -41,30 +43,35 @@ class App extends Component {
         </Typography>
       );
     }
-    return dayTimes;
+    return (
+    <div className="day">
+      {dayTimes}
+    </div>);
   }
 
   render() {
     const { location1, location2 } = this.state;
-    const timeNow1 = moment();
-    const timeNow2 = moment().tz(location2)
     const time1 = moment().tz(location1).startOf('day');
-    const time2 = moment(time1).tz(location2)
+    const time2 = moment(time1).tz(location2);
     const dayTimes1 = this.calcDay(time1);
     const dayTimes2 = this.calcDay(time2);
     
     return (
       <Grid container className="app">
-        <Grid sm={6} className="left" key="left">
+        <Grid xs={6} className="left" key="left">
           <IntegrationReactSelect onChange={(value) => this.onChageTimeZone('location1', value)}/>
-          <Typography component="h4" variant="h4">{location1}</Typography>
-          <Typography component="h3" variant="h3"><MomentReact format='hh:mm a' interval={15000}>{timeNow1}</MomentReact></Typography>
+          <Typography component="h5" variant="h5">{location1}</Typography>
+          <Typography component="h4" variant="h4">
+            <MomentReact format='hh:mm:ss a'>{this.state.now.tz(location1)}</MomentReact>
+          </Typography>
           {dayTimes1}
         </Grid>
-        <Grid sm={6} className="right" key="right">
+        <Grid xs={6} className="right" key="right">
           <IntegrationReactSelect onChange={(value) => this.onChageTimeZone('location2', value)}/>
-          <Typography component="h4" variant="h4">{location2}</Typography>
-          <Typography component="h3" variant="h3"><MomentReact format='hh:mm a' interval={15000}>{timeNow2}</MomentReact></Typography>
+          <Typography component="h5" variant="h5">{location2}</Typography>
+          <Typography component="h4" variant="h4">
+            <MomentReact format='hh:mm:ss a'>{moment().tz(location2)}</MomentReact>
+          </Typography>
           {dayTimes2}
         </Grid>
       </Grid>

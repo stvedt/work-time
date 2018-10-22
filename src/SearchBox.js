@@ -2,26 +2,23 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import Select, { createFilter } from 'react-select';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import MenuItem from '@material-ui/core/MenuItem';
-import { emphasize } from '@material-ui/core/styles/colorManipulator';
 import { countries } from 'moment-timezone/data/meta/latest.json';
 
 const countryKeys = Object.keys(countries);
 const newSuggestions = [];
 const filterOption = createFilter({ stringify: option => option.label, matchFrom: 'start' });
 
-countryKeys.map((country) => {
-  // console.log(countries[country]);
+countryKeys.forEach((country) => {
   const fullCountry = countries[country];
 
   if( fullCountry.zones.length > 1 ) {
-    fullCountry.zones.map(zone => {
+    fullCountry.zones.forEach(zone => {
       newSuggestions.push({
         value: zone,
         label: `${fullCountry.name} - ${zone}`,
