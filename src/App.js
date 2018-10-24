@@ -22,7 +22,6 @@ class App extends Component {
   }
 
   onChageTimeZone(location, timezone){
-    console.log(location, timezone.value);
     if(timezone.value){
       this.setState({
         [location]: timezone.value

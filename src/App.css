@@ -13,6 +13,11 @@
   display: block;
   padding: 5px 0;
 }
+.day {
+  margin: 0 -15px;
+}
+.left .day { margin-left: 0; }
+.right .day { margin-right: 0; }
 .day :nth-child(even) .time{
   background-color: #444;
 }
